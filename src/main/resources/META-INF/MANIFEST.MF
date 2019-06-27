@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Premain-Class: com.github.jhejderup.HelloWorldAgent
+Premain-Class: com.github.jhejderup.MisterChangeInjector

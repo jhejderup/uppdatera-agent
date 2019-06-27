@@ -45,7 +45,7 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Premain-Class>com.github.jhejderup.HelloWorldAgent</Premain-Class>
+                            <Premain-Class>com.github.jhejderup.MisterChangeInjector</Premain-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
