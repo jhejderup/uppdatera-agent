@@ -1,2 +1,2 @@
 # uppdatera-agent
-Purposely inject code changes in class files
+Purposely 💉 code changes in class files
