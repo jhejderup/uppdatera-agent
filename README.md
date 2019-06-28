@@ -110,7 +110,7 @@ The goal is to enforce the program to perform a different execution path by mani
 
 As input, we take a class and a method. The method must belong to the class.
 
-1. For CFC, we manipulate (actually flip) branch conditions 
+1. For CFC, we manipulate (actually flip) branch conditions and also introduce new method calls. 
 2. For DFC, we manipulate primitive types (e.g., Integer or String) to reach new dataflow decions
 
 All of these serves as a cheap "proxy" for introducing unexpected behaviour (due to code changes)
