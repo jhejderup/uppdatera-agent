@@ -8,7 +8,7 @@ Purposely 💉 code changes in class files
 
 Let's add this as a dependency in the `pom.xml file`
 
-```pom
+```xml
     <dependencies>
         <dependency>
             <groupId>com.twitter.twittertext</groupId>
