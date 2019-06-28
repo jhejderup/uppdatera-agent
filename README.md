@@ -21,6 +21,8 @@ Let's add this as a dependency in the `pom.xml file`
 Here is the example code:
 
 ```java
+import com.twitter.twittertext.TwitterTextParser;
+
 public class TestExample{
 
     public static void main(String[] args)  {
