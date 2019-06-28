@@ -115,8 +115,11 @@ As input, we take a class and a method. The method must belong to the class.
 
 All of these serves as a cheap "proxy" for introducing unexpected behaviour (due to code changes)
 
-Q1: What about try-catch statements? tricky to implement in bytecode
+**Q1**: What about try-catch statements? tricky to implement in bytecode
 
+### Which methods should we change?
+
+We can avoid some randomness by actually taking methods with high churn in past hisotry (e.g., hot spots). These methods are likely to change later and it is important to check whether Uppdatera and test suites can cover those
 
 
 
