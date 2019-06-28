@@ -122,6 +122,9 @@ All of these serves as a cheap "proxy" for introducing unexpected behaviour (due
 We can avoid some randomness by actually taking methods with high churn in past hisotry (e.g., hot spots). These methods are likely to change later and it is important to check whether Uppdatera and test suites can cover those
 
 
+## Resources
+
+Control Flow Analysis: https://www.jacoco.org/jacoco/trunk/doc/flow.html
 
  
 
