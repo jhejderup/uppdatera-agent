@@ -97,3 +97,28 @@ Visiting method: parseTweet
 Visiting method: parseTweet
 Bytecode manipulation ftw!
 ```
+## Now let's generalize it!
+
+We can inject two types of changes
+
+ - Control flow changes
+ - Data flow changes
+
+The goal is to enforce the program to perform a different execution path by manipulating the logic
+
+![IMAGE 2019-06-28 14:32:28](https://user-images.githubusercontent.com/2521475/60342367-946ddd80-99b1-11e9-937b-02c063925a5a.jpg)
+
+As input, we take a class and a method. The method must belong to the class.
+
+1. For CFC, we manipulate (actually flip) branch conditions 
+2. For DFC, we manipulate primitive types (e.g., Integer or String) to reach new dataflow decions
+
+All of these serves as a cheap "proxy" for introducing unexpected behaviour (due to code changes)
+
+Q1: What about try-catch statements? tricky to implement in bytecode
+
+
+
+
+ 
+
