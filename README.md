@@ -125,6 +125,8 @@ We can avoid some randomness by actually taking methods with high churn in past 
 ## Resources
 
 Control Flow Analysis: https://www.jacoco.org/jacoco/trunk/doc/flow.html
+bytecode-to-cfg: https://github.com/masters-info-nantes/bytecode-to-cfg
+
 
  
 
