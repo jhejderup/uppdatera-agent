@@ -17,7 +17,6 @@ public class Transformer implements ClassFileTransformer {
 
 
 
-
         if(className.contains("TwitterTextParser")) {
             System.out.println(className);
             ClassReader reader = new ClassReader(classfileBuffer);

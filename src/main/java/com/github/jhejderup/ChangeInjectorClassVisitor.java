@@ -12,13 +12,17 @@ public class ChangeInjectorClassVisitor extends ClassVisitor {
         className = pClassName;
     }
 
+
+
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc,
                                      String signature, String[] exceptions) {
+
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         if(name.equals("parseTweet")){
             System.out.println("Visiting method: " + name);
-            return new ChangeInjectorMethodVisitor(access,name, desc, signature, exceptions,mv);
+            return new NegateCondition(access,name, desc, signature, exceptions,mv);
+           // return new ChangeInjectorMethodVisitor(access,name, desc, signature, exceptions,mv);
         } else
             return mv;
 

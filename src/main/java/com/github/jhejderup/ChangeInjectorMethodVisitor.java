@@ -1,12 +1,19 @@
 package com.github.jhejderup;
 
 
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
+
 
 public class ChangeInjectorMethodVisitor extends MethodNode {
+
+
 
     public ChangeInjectorMethodVisitor(int access, String name, String desc,
     String signature, String[] exceptions, MethodVisitor mv) {
@@ -16,12 +23,15 @@ public class ChangeInjectorMethodVisitor extends MethodNode {
 
     @Override
     public void visitEnd() {
-        var itr = instructions.iterator();
+
+
+        ListIterator<AbstractInsnNode> itr = instructions.iterator();
 
 
         while (itr.hasNext()) {
             // Checks whether the instruction is ALOAD 3
             AbstractInsnNode node = itr.next();
+
             if (node.getOpcode() != Opcodes.ALOAD //25
                     || ((VarInsnNode) node).var != 3)
                 continue;
@@ -32,7 +42,6 @@ public class ChangeInjectorMethodVisitor extends MethodNode {
             if (node.getNext() == null
                     || node.getNext().getOpcode() != Opcodes.INVOKEVIRTUAL) //182 IFNE=154
                 continue;
-
 
 
             // Checks the invoked method name and signature
