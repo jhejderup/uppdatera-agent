@@ -19,7 +19,8 @@ public class Transformer implements ClassFileTransformer {
             System.out.println(className);
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            ClassVisitor visitor = new ClazzVisitor(writer, className);
+            //ClassVisitor visitor = new ClazzVisitor(writer, className);
+            MethodReplacer visitor = new MethodReplacer(writer,"stringz", className);
             reader.accept(visitor, 0);
             return writer.toByteArray();
         }
