@@ -1,12 +1,12 @@
 package com.github.jhejderup;
 
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
+import java.security.ProtectionDomain;
 
 public class Transformer implements ClassFileTransformer {
 
@@ -15,18 +15,17 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-
-
-        if(className.contains("TwitterTextParser")) {
+        if (className.contains("DependencyClass")) {
             System.out.println(className);
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            ClassVisitor visitor = new ChangeInjectorClassVisitor(writer, className);
+            ClassVisitor visitor = new ClazzVisitor(writer, className);
             reader.accept(visitor, 0);
             return writer.toByteArray();
         }
         return null;
     }
+
 
 }
 

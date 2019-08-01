@@ -3,18 +3,15 @@ package com.github.jhejderup;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.tree.MethodNode;
-
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class NegateCondition extends MethodNode {
 
-    private static Map<Integer, Integer> opcodeMap = new HashMap<>();
-
     public static final String NAME = "NegateCondition";
+    private static Map<Integer, Integer> opcodeMap = new HashMap<>();
 
     static {
         opcodeMap.put(Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE);
@@ -53,13 +50,13 @@ public class NegateCondition extends MethodNode {
 
     @Override
     public void visitJumpInsn(int opcode, Label label) {
-        if(alternate){
+        if (alternate) {
             System.out.println("Old code:" + opcode + ", new: " + flip(opcode));
             super.visitJumpInsn(Opcodes.IFNULL, label);
             alternate = false;
         } else {
             System.out.println("Old code:" + opcode + ", new: " + flip(opcode));
-           super.visitJumpInsn(Opcodes.IFNULL, label);
+            super.visitJumpInsn(Opcodes.IFNULL, label);
         }
         accept(mv);
 
