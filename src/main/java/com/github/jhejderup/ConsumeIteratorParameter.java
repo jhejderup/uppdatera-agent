@@ -34,8 +34,6 @@ public class ConsumeIteratorParameter extends ClassVisitor {
             Type[] args = Type.getArgumentTypes(this.methodDesc);
             for (int i = 0; i < args.length; i++) {
                 if (args[i].getSort() == Type.OBJECT && args[i].getDescriptor().equals("Ljava/lang/Iterable;")) {
-                    Label EMPTY = new Label();
-
                     // Iterable parameter
                     int off = (this.methodAccess | Opcodes.ACC_STATIC) == 0 ? 0 : 1;
                     int param = i + off;
@@ -71,17 +69,18 @@ public class ConsumeIteratorParameter extends ClassVisitor {
                     visitVarInsn(ALOAD, it_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true);
                     Label doneLoop = new Label();
+
                     //loop and add elements to a new list
                     visitJumpInsn(IFEQ, doneLoop);
                     visitVarInsn(ALOAD, it_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
-                //    visitTypeInsn(CHECKCAST, "java/lang/String");
                     visitVarInsn(ASTORE, gen_id);
                     visitVarInsn(ALOAD, arr_id);
                     visitVarInsn(ALOAD, gen_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "add", "(Ljava/lang/Object;)Z", true);
                     visitInsn(POP);
                     visitJumpInsn(GOTO, doLoop);
+
                     //done with adding all elements
                     //duplicate array with the same elements
                     visitLabel(doneLoop);
