@@ -13,7 +13,6 @@ public class ConsumeIteratorParameter extends ClassVisitor {
         hotClassName = clazzName;
     }
 
-    // invoked for every method
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
@@ -36,28 +35,65 @@ public class ConsumeIteratorParameter extends ClassVisitor {
             for (int i = 0; i < args.length; i++) {
                 if (args[i].getSort() == Type.OBJECT && args[i].getDescriptor().equals("Ljava/lang/Iterable;")) {
                     Label EMPTY = new Label();
-                    Type type = Type.getType("Ljava/util/Iterator;");
-                    int id = newLocal(type);
-                    System.out.println("Inside:" + args[i].getDescriptor());
+
+                    // Iterable parameter
                     int off = (this.methodAccess | Opcodes.ACC_STATIC) == 0 ? 0 : 1;
                     int param = i + off;
                     System.out.println("Parameter: " + param);
-                    int opcode = Type.getArgumentTypes(this.methodDesc)[i].getOpcode(Opcodes.IALOAD);
-                    System.out.println("Opcode: " + opcode);
-                    System.out.println("Type: " + type.getClassName());
-                    System.out.println("ID: " + id);
-                    visitVarInsn(opcode, param);
+                    //New var to store iterator
+                    Type it_type = Type.getType("Ljava/util/Iterator;");
+                    int it_id = newLocal(it_type);
+                    System.out.println("ITR_ID: " + it_id );
+
+                    // New var to store array
+                    Type arr_type = Type.getType("Ljava/util/Collection;");
+                    int arr_id = newLocal(arr_type);
+                    System.out.println("ARR_ID: " + arr_id );
+
+                    //New generic placeholder var
+                    int gen_id = newLocal(Type.getType("Ljava/lang/Object;"));
+                    System.out.println("LOOP_ID: " + gen_id);
+
+                    // Create new array and store it
+                    visitTypeInsn(NEW, "java/util/ArrayList");
+                    visitInsn(DUP);
+                    visitMethodInsn(INVOKESPECIAL, "java/util/ArrayList", "<init>", "()V", false);
+                    visitVarInsn(ASTORE, arr_id);
+
+                    // Load iterator parameter and store it
+                    visitVarInsn(ALOAD, param);
                     visitMethodInsn(INVOKEINTERFACE, "java/lang/Iterable", "iterator", "()Ljava/util/Iterator;", true);
-                    visitVarInsn(AASTORE, id);
-                    visitVarInsn(AALOAD, id);
+                    visitVarInsn(ASTORE, it_id);
+
+                    //Load iterator and check hasNext
+                    Label doLoop = new Label();
+                    visitLabel(doLoop);
+                    visitVarInsn(ALOAD, it_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true);
-                    visitJumpInsn(IFEQ, EMPTY);
-                    visitVarInsn(AALOAD, id);
+                    Label doneLoop = new Label();
+                    //loop and add elements to a new list
+                    visitJumpInsn(IFEQ, doneLoop);
+                    visitVarInsn(ALOAD, it_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
+                //    visitTypeInsn(CHECKCAST, "java/lang/String");
+                    visitVarInsn(ASTORE, gen_id);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ALOAD, gen_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "add", "(Ljava/lang/Object;)Z", true);
                     visitInsn(POP);
-                    visitLabel(EMPTY);
+                    visitJumpInsn(GOTO, doLoop);
+                    //done with adding all elements
+                    //duplicate array with the same elements
+                    visitLabel(doneLoop);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "addAll", "(Ljava/util/Collection;)Z", true);
+                    visitInsn(POP);
+                    //store the array in place of the iterator
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ASTORE, param);
                 } else {
-                    System.out.println("Outside: " + args[i].getDescriptor());
+                    System.out.println("Outside: " + args[i].getDescriptor() + "Sort: " + args[i].getSort());
                 }
             }
         }
