@@ -17,14 +17,16 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.contains("DependencyClass")) {
+        System.out.println(className);
+
+        if (className.contains("org/apache/commons/lang3/StringUtils")) {
             System.out.println(className);
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
            // MethodReplacer visitor = new MethodReplacer(writer,"stringz", className);
 
-            //MutateReturnValue visitor = new MutateReturnValue(writer,"intz", className);
-            ConsumeIteratorParameter visitor = new ConsumeIteratorParameter(writer,"intz", className);
+            MutateReturnValue visitor = new MutateReturnValue(writer,"intz", className);
+            //ConsumeIteratorParameter visitor = new ConsumeIteratorParameter(writer,"intz", className);
             reader.accept(visitor, ClassReader.SKIP_FRAMES);
             return writer.toByteArray();
         }

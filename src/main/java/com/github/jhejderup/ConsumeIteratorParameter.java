@@ -88,6 +88,9 @@ public class ConsumeIteratorParameter extends ClassVisitor {
                     visitVarInsn(ALOAD, arr_id);
                     visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "addAll", "(Ljava/util/Collection;)Z", true);
                     visitInsn(POP);
+                    //shuffle the list
+                    visitVarInsn(ALOAD, arr_id);
+                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
                     //store the array in place of the iterator
                     visitVarInsn(ALOAD, arr_id);
                     visitVarInsn(ASTORE, param);

@@ -20,7 +20,15 @@ public class MutateReturnValue extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (!name.equals("boolz") && !name.equals("intz") && !name.equals("stringz"))
+        if (!name.equals("isBlank") &&
+                !name.equals("isEmpty") &&
+                !name.equals("isNotBlank") &&
+                !name.equals("isNotEmpty") &&
+                !name.equals("equals") &&
+                !name.equals("startsWith") &&
+                !name.equals("endsWith") &&
+                !name.equals("equalsIgnoreCase")
+        )
             return mv;
 
         return new MutateReturn(mv, access, name, desc);
@@ -58,7 +66,7 @@ public class MutateReturnValue extends ClassVisitor {
                                 "java/lang/invoke/StringConcatFactory",
                                 "makeConcatWithConstants",
                                 "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false)
-                        , "\u0001YOO");
+                        , "\u0001\t\t\t");
             }
 
             // ADD 1000 to a return variable
