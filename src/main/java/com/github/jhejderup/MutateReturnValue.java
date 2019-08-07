@@ -33,26 +33,14 @@ public class MutateReturnValue extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-
         @Override
-        protected void onMethodEnter() {
+        protected void onMethodExit(int opcode) {
             Type[] args = Type.getArgumentTypes(this.methodDesc);
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] == Type.BOOLEAN_TYPE) {
-                    int off = (this.methodAccess | Opcodes.ACC_STATIC) == 0 ? 0 : 1;
-                    int param = i + off;
-                    visitVarInsn(ILOAD, param);
-                    System.out.println("We found the bool parameter at register: " + param);
-                    Label branch = new Label();
-                    Label end = new Label();
-                    visitJumpInsn(IFNE, branch);
-                    visitInsn(ICONST_1);
-                    visitJumpInsn(GOTO, end);
-                    visitLabel(branch);
-                    visitInsn(ICONST_0);
-                    visitLabel(end);
-                    visitVarInsn(ISTORE, param);
-                }
+            if (args.length == 1 && opcode != ATHROW && (
+                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                visitLdcInsn("\n\n\n");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
             }
         }
 
