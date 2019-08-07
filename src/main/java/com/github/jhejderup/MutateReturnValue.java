@@ -43,20 +43,9 @@ public class MutateReturnValue extends ClassVisitor {
         @Override
         protected void onMethodExit(int opcode) {
 
-            //Negate boolean value
-            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
-                Label branch = new Label();
-                Label rtn = new Label();
-                visitJumpInsn(IFNE, branch);
-                visitInsn(ICONST_1);
-                visitJumpInsn(GOTO, rtn);
-                visitLabel(branch);
-                visitInsn(ICONST_0);
-                visitLabel(rtn);
-            }
-
-            //Append random String
-            if (opcode != ATHROW && (
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+            //Append
+            if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
 
@@ -66,17 +55,8 @@ public class MutateReturnValue extends ClassVisitor {
                                 "java/lang/invoke/StringConcatFactory",
                                 "makeConcatWithConstants",
                                 "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false)
-                        , "\u0001\t\t\t");
+                        , "\u0001\n\n\n");
             }
-
-            // ADD 1000 to a return variable
-            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.INT_TYPE) {
-                System.out.println("Processsing: " + hotMethodName);
-                visitIntInsn(SIPUSH, 1000);
-                visitInsn(IADD);
-            }
-
-
         }
 
         @Override
