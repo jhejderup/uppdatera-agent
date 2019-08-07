@@ -14,10 +14,10 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("com/alibaba/fastjson/JSON")) {
+        if (className.equals("com/alibaba/fastjson/serializer/JSONSerializer")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateReturnValue visitor = new MutateReturnValue(writer, "toJSONString", className);
+            MutateReturnValue visitor = new MutateReturnValue(writer, "config", className);
             reader.accept(visitor, ClassReader.SKIP_FRAMES);
             return writer.toByteArray();
         }
