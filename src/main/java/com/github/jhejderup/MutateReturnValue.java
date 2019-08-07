@@ -7,6 +7,7 @@ import org.objectweb.asm.commons.AdviceAdapter;
 public class MutateReturnValue extends ClassVisitor {
 
     private final String hotMethodName, hotClassName;
+    private int ASTORE_STR_VAR;
 
 
     public MutateReturnValue(ClassWriter cw, String methodName, String clazzName) {
@@ -33,20 +34,27 @@ public class MutateReturnValue extends ClassVisitor {
         }
 
         @Override
+        protected void onMethodEnter() {
+            Type str = Type.getType("Ljava/lang/String;");
+            ASTORE_STR_VAR = newLocal(str);
+            visitLdcInsn("\n\n\n");
+            visitVarInsn(ASTORE,ASTORE_STR_VAR);
+        }
+
+        @Override
         protected void onMethodExit(int opcode) {
             Type[] args = Type.getArgumentTypes(this.methodDesc);
-            //Append three newlines `\n\n\n`
             if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-
+                visitVarInsn(ALOAD,ASTORE_STR_VAR);
                 visitInvokeDynamicInsn("makeConcatWithConstants",
-                        "(Ljava/lang/String;)Ljava/lang/String;",
+                        "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
                         new Handle(Opcodes.H_INVOKESTATIC,
                                 "java/lang/invoke/StringConcatFactory",
                                 "makeConcatWithConstants",
-                                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false)
-                        , "\u0001\n\n\n");
+                                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false),
+                        new Object[]{"\u0001\u0001"});
             }
         }
 
