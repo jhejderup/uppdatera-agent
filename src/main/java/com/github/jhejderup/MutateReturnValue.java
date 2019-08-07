@@ -47,14 +47,10 @@ public class MutateReturnValue extends ClassVisitor {
             if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-                visitVarInsn(ALOAD,ASTORE_STR_VAR);
-                visitInvokeDynamicInsn("makeConcatWithConstants",
-                        "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
-                        new Handle(Opcodes.H_INVOKESTATIC,
-                                "java/lang/invoke/StringConcatFactory",
-                                "makeConcatWithConstants",
-                                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;", false),
-                        new Object[]{"\u0001\u0001"});
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                visitLdcInsn("\n\n\n");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
             }
         }
 
