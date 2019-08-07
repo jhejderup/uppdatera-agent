@@ -20,15 +20,7 @@ public class MutateReturnValue extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (!name.equals("isBlank") &&
-                !name.equals("isEmpty") &&
-                !name.equals("isNotBlank") &&
-                !name.equals("isNotEmpty") &&
-                !name.equals("equals") &&
-                !name.equals("startsWith") &&
-                !name.equals("endsWith") &&
-                !name.equals("equalsIgnoreCase")
-        )
+        if (!name.equals(this.hotMethodName))
             return mv;
 
         return new MutateReturn(mv, access, name, desc);
@@ -42,9 +34,8 @@ public class MutateReturnValue extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-
             Type[] args = Type.getArgumentTypes(this.methodDesc);
-            //Append
+            //Append three newlines `\n\n\n`
             if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
@@ -63,7 +54,6 @@ public class MutateReturnValue extends ClassVisitor {
         public void visitMaxs(int maxStack, int maxLocals) {
             super.visitMaxs(0, 0);
         }
-
 
     }
 }
