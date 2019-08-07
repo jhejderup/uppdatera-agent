@@ -33,13 +33,6 @@ public class MutateReturnValue extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-        @Override
-        protected void onMethodEnter() {
-            Type str = Type.getType("Ljava/lang/String;");
-            ASTORE_STR_VAR = newLocal(str);
-            visitLdcInsn("\n\n\n");
-            visitVarInsn(ASTORE,ASTORE_STR_VAR);
-        }
 
         @Override
         protected void onMethodExit(int opcode) {
@@ -47,7 +40,7 @@ public class MutateReturnValue extends ClassVisitor {
             if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-                visitVarInsn(ALOAD, ASTORE_STR_VAR);
+                visitLdcInsn("\n\n\n");
                 visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
             }
         }
