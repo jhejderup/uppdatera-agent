@@ -40,7 +40,7 @@ public class MutateReturnValue extends ClassVisitor {
             if (args.length == 6 && opcode != ATHROW && (
                     Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                             Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-                visitLdcInsn("\n\n\n");
+                visitLdcInsn("");
                 visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
             }
         }
