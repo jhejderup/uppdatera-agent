@@ -21,35 +21,38 @@ public class MethodReplacer extends ClassVisitor {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         if(!name.contains(hotMethodName))
-            // reproduce the methods we're not interested in, unchanged
             return mv;
 
-        // alter the behavior for the specific method
-        return new ReplaceWithNULL(
-                mv,
-                (Type.getArgumentsAndReturnSizes(desc)>>2)-1);
+        return new Replacer(mv);
     }
 
-    private class ReplaceWithNULL extends MethodVisitor {
+    private class Replacer extends MethodVisitor {
         private final MethodVisitor mv;
-        private final int newMaxLocals;
 
-        ReplaceWithNULL(MethodVisitor mv, int newMaxL) {
+        Replacer(MethodVisitor mv) {
             super(Opcodes.ASM5);
             this.mv = mv;
-            newMaxLocals = newMaxL;
         }
 
         @Override
         public void visitMaxs(int maxStack, int maxLocals) {
-            mv.visitMaxs(0, newMaxLocals);
+            mv.visitMaxs(0, 0);
         }
 
         @Override
         public void visitCode() {
             mv.visitCode();
-            mv.visitInsn(Opcodes.ACONST_NULL);
-            mv.visitInsn(Opcodes.ARETURN);// our new code
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            Label label1 = new Label();
+            mv.visitJumpInsn(Opcodes.IF_ACMPNE, label1);
+            mv.visitInsn(Opcodes.ICONST_1);
+            Label label2 = new Label();
+            mv.visitJumpInsn(Opcodes.GOTO, label2);
+            mv.visitLabel(label1);
+            mv.visitInsn(Opcodes.ICONST_0);
+            mv.visitLabel(label2);
+            mv.visitInsn(Opcodes.IRETURN);
         }
 
         @Override
