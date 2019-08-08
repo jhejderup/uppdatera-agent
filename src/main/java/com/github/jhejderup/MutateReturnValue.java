@@ -58,15 +58,8 @@ public class MutateReturnValue extends ClassVisitor {
         }
 
         @Override
-        protected void onMethodEnter() {
-            visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            visitLdcInsn("[Uppdatera-agent]: invoking changed section");
-            visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
-        }
-
-        @Override
         public void visitJumpInsn(int opcode, Label label) {
-
+            System.out.println("We swap the opcode: " + opcode "with " +opcodeMap.get(opcode));
             super.visitJumpInsn(opcodeMap.get(opcode), label);
         }
 
