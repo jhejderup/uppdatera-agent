@@ -43,15 +43,25 @@ public class MethodReplacer extends ClassVisitor {
         public void visitCode() {
             mv.visitCode();
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitVarInsn(Opcodes.ALOAD, 1);
             Label label1 = new Label();
-            mv.visitJumpInsn(Opcodes.IF_ACMPNE, label1);
-            mv.visitInsn(Opcodes.ICONST_1);
+            mv.visitJumpInsn(Opcodes.IFNULL, label1);
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
             Label label2 = new Label();
-            mv.visitJumpInsn(Opcodes.GOTO, label2);
+            mv.visitJumpInsn(Opcodes.IFNE, label2);
             mv.visitLabel(label1);
-            mv.visitInsn(Opcodes.ICONST_0);
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            Label label3 = new Label();
+            mv.visitJumpInsn(Opcodes.IF_ACMPNE, label3);
             mv.visitLabel(label2);
+            mv.visitInsn(Opcodes.ICONST_1);
+            Label label4 = new Label();
+            mv.visitJumpInsn(Opcodes.GOTO, label4);
+            mv.visitLabel(label3);
+            mv.visitInsn(Opcodes.ICONST_0);
+            mv.visitLabel(label4);
             mv.visitInsn(Opcodes.IRETURN);
         }
 
