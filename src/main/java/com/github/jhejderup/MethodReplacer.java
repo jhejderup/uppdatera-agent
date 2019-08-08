@@ -42,7 +42,7 @@ public class MethodReplacer extends ClassVisitor {
         @Override
         public void visitCode() {
             mv.visitCode();
-            mv.visitLdcInsn(" ");
+            mv.visitLdcInsn("");
             mv.visitVarInsn(Opcodes.ALOAD, 0);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
             mv.visitInsn(Opcodes.IRETURN);
