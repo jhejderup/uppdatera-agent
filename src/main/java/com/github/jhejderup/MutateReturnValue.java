@@ -38,6 +38,7 @@ public class MutateReturnValue extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
+
             if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
                 Label branch = new Label();
                 Label rtn = new Label();
