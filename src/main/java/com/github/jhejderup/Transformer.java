@@ -17,7 +17,7 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("com/google/common/base/Strings")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateReturnValue visitor = new MutateReturnValue(writer, "isNullOrEmpty", className);
+            MethodReplacer visitor = new MethodReplacer(writer, "isNullOrEmpty", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
