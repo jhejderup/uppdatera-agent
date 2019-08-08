@@ -12,27 +12,6 @@ import static org.objectweb.asm.Opcodes.*;
 public class MutateReturnValue extends ClassVisitor {
 
     private final String hotMethodName, hotClassName;
-    private static Map<Integer, Integer> opcodeMap = new HashMap<Integer, Integer>();
-
-    static {
-        opcodeMap.put(IF_ACMPEQ, IF_ACMPNE);
-        opcodeMap.put(IF_ACMPNE, IF_ACMPEQ);
-        opcodeMap.put(IF_ICMPEQ, IF_ICMPNE);
-        opcodeMap.put(IF_ICMPGE, IF_ICMPLT);
-        opcodeMap.put(IF_ICMPGT, IF_ICMPLE);
-        opcodeMap.put(IF_ICMPLE, IF_ICMPGT);
-        opcodeMap.put(IF_ICMPLT, IF_ICMPGE);
-        opcodeMap.put(IF_ICMPNE, IF_ICMPEQ);
-        opcodeMap.put(IFEQ, IFNE);
-        opcodeMap.put(IFGE, IFLT);
-        opcodeMap.put(IFGT, IFLE);
-        opcodeMap.put(IFLE, IFGT);
-        opcodeMap.put(IFLT, IFGE);
-        opcodeMap.put(IFNE, IFEQ);
-        opcodeMap.put(IFNONNULL, IFNULL);
-        opcodeMap.put(IFNULL, IFNONNULL);
-    }
-
 
     public MutateReturnValue(ClassWriter cw, String methodName, String clazzName) {
         super(Opcodes.ASM5, cw);
@@ -58,9 +37,17 @@ public class MutateReturnValue extends ClassVisitor {
         }
 
         @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            System.out.println("We swap the opcode: " + opcode + "with " +opcodeMap.get(opcode));
-            super.visitJumpInsn(opcodeMap.get(opcode), label);
+        protected void onMethodExit(int opcode) {
+            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
+                Label branch = new Label();
+                Label rtn = new Label();
+                visitJumpInsn(IFNE, branch);
+                visitInsn(ICONST_1);
+                visitJumpInsn(GOTO, rtn);
+                visitLabel(branch);
+                visitInsn(ICONST_0);
+                visitLabel(rtn);
+            }
         }
 
         @Override

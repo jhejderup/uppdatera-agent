@@ -14,10 +14,10 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("com/fasterxml/jackson/databind/ObjectMapper")) {
+        if (className.equals("com/google/common/base/Objects")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateReturnValue visitor = new MutateReturnValue(writer, "_configAndWriteValue", className);
+            MutateReturnValue visitor = new MutateReturnValue(writer, "equal", className);
             reader.accept(visitor, ClassReader.SKIP_FRAMES);
             return writer.toByteArray();
         }
