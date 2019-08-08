@@ -42,9 +42,21 @@ public class MethodReplacer extends ClassVisitor {
         @Override
         public void visitCode() {
             mv.visitCode();
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            Label label1 = new Label();
+            mv.visitJumpInsn(Opcodes.IFNULL, label1);
             mv.visitLdcInsn("");
             mv.visitVarInsn(Opcodes.ALOAD, 0);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
+            Label label2 = new Label();
+            mv.visitJumpInsn(Opcodes.IFEQ, label2);
+            mv.visitLabel(label1);
+            mv.visitInsn(Opcodes.ICONST_1);
+            Label label3 = new Label();
+            mv.visitJumpInsn(Opcodes.GOTO, label3);
+            mv.visitLabel(label2);
+            mv.visitInsn(Opcodes.ICONST_0);
+            mv.visitLabel(label3);
             mv.visitInsn(Opcodes.IRETURN);
         }
 
