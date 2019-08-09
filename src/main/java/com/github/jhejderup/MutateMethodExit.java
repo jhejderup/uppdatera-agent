@@ -42,7 +42,7 @@ public class MutateMethodExit extends ClassVisitor {
             Type[] args = Type.getArgumentTypes(this.methodDesc);
             boolean no_mod = true;
             for (int i = 0; i < args.length ; i++) {
-                if(args[i].getSort() == Type.OBJECT &&
+                if(args[i].getSort() == Type.ARRAY &&
                         args[i].getDescriptor().equals("[Ljava/lang/Object;")){
                     break;
                 }
