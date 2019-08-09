@@ -41,20 +41,6 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            if (opcode == INVOKESTATIC
-                    && owner.equals("java/util/Collections")
-                    && name.equals("reverse")
-                    && descriptor.equals("(Ljava/util/List;)V")
-                    && isInterface == false){
-                visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
-            } else {
-                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
-            }
-
-        }
-
-        @Override
         protected void onMethodEnter() {
             super.onMethodEnter();
         }
