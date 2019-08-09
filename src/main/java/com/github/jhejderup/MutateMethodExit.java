@@ -97,13 +97,9 @@ public class MutateMethodExit extends ClassVisitor {
                     //done with adding all elements
                     //duplicate array with the same elements
                     visitLabel(doneLoop);
-                    visitVarInsn(ALOAD, arr_id);
-                    visitVarInsn(ALOAD, arr_id);
-                    visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "addAll", "(Ljava/util/Collection;)Z", true);
-                    visitInsn(POP);
                     //shuffle the list
-//                    visitVarInsn(ALOAD, arr_id);
-//                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
                     //store the array in place of the iterator
                     visitVarInsn(ALOAD, arr_id);
                     visitVarInsn(ASTORE, param);
@@ -131,9 +127,7 @@ public class MutateMethodExit extends ClassVisitor {
                 if(opcode != ATHROW  &&
                         args[i].getSort() == Type.ARRAY &&
                         args[i].getDescriptor().equals("[Ljava/lang/Object;")){
-                    visitVarInsn(ALOAD, 0);
-                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z", false);
-                    visitInsn(POP);
+                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
                     visitVarInsn(ALOAD, 2);
                     no_mod = false;
                     break;
