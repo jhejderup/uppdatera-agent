@@ -14,10 +14,10 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("com/google/common/base/Strings")) {
+        if (className.equals("com/google/common/collect/Lists")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MethodReplacer visitor = new MethodReplacer(writer, "isNullOrEmpty", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "newArrayList", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
