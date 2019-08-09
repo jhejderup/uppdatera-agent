@@ -39,13 +39,14 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodEnter() {
+            System.out.println(this.methodDesc);
             boolean no_mod = true;
             Type[] args = Type.getArgumentTypes(this.methodDesc);
             for (int i = 0; i < args.length ; i++) {
-
                 if(
                         args[i].getSort() == Type.OBJECT &&
                         args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
+
 
                     Type file = Type.getType("Ljava/io/File;");
                     int id = newLocal(file);
@@ -73,7 +74,7 @@ public class MutateMethodExit extends ClassVisitor {
                 }
 
                 if(
-                        args[i].getSort() == Type.OBJECT &&
+                        args[i].getSort() == Type.ARRAY &&
                         args[i].getDescriptor().equals("[Ljava/lang/Object;")){
                     Type file = Type.getType("Ljava/io/File;");
                     int id = newLocal(file);
