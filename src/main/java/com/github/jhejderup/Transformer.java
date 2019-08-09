@@ -14,10 +14,10 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("com/google/gson/Gson")) {
+        if (className.equals("com/google/gson/GsonBuilder")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "fromJson", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "addTypeAdaptersForDate", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
