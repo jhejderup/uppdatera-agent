@@ -17,7 +17,7 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("com/google/gson/GsonBuilder")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "addTypeAdaptersForDate", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "create", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }

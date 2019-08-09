@@ -13,27 +13,6 @@ import static org.objectweb.asm.Opcodes.*;
 public class MutateMethodExit extends ClassVisitor {
 
     private final String hotMethodName, hotClassName;
-    private static Map<Integer, Integer> opcodeMap = new HashMap<Integer, Integer>();
-
-    static {
-        opcodeMap.put(IF_ACMPEQ, IF_ACMPNE);
-        opcodeMap.put(IF_ACMPNE, IF_ACMPEQ);
-        opcodeMap.put(IF_ICMPEQ, IF_ICMPNE);
-        opcodeMap.put(IF_ICMPGE, IF_ICMPLT);
-        opcodeMap.put(IF_ICMPGT, IF_ICMPLE);
-        opcodeMap.put(IF_ICMPLE, IF_ICMPGT);
-        opcodeMap.put(IF_ICMPLT, IF_ICMPGE);
-        opcodeMap.put(IF_ICMPNE, IF_ICMPEQ);
-        opcodeMap.put(IFEQ, IFNE);
-        opcodeMap.put(IFGE, IFLT);
-        opcodeMap.put(IFGT, IFLE);
-        opcodeMap.put(IFLE, IFGT);
-        opcodeMap.put(IFLT, IFGE);
-        opcodeMap.put(IFNE, IFEQ);
-        opcodeMap.put(IFNONNULL, IFNULL);
-        opcodeMap.put(IFNULL, IFNONNULL);
-    }
-
 
     public MutateMethodExit(ClassWriter cw, String methodName, String clazzName) {
         super(Opcodes.ASM5, cw);
@@ -62,8 +41,22 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            super.visitJumpInsn(opcodeMap.get(opcode), label);
+        public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+            if (opcode == INVOKESTATIC
+                    && owner.equals("java/util/Collections")
+                    && name.equals("reverse")
+                    && descriptor.equals("(Ljava/util/List;)V")
+                    && isInterface == false){
+                visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
+            } else {
+                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+            }
+
+        }
+
+        @Override
+        protected void onMethodEnter() {
+            super.onMethodEnter();
         }
 
         @Override
