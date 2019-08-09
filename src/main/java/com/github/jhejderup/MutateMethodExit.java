@@ -50,7 +50,7 @@ public class MutateMethodExit extends ClassVisitor {
                         args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
                     // Iterable parameter
                     int off = (this.methodAccess | Opcodes.ACC_STATIC) == 0 ? 0 : 1;
-                    int param = i + off;
+                    int param = 2;
                     System.out.println("Parameter: " + param);
                     //New var to store iterator
                     Type it_type = Type.getType("Ljava/util/Iterator;");
