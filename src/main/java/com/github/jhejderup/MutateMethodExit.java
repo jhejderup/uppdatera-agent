@@ -3,11 +3,6 @@ package com.github.jhejderup;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.AdviceAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.objectweb.asm.Opcodes.*;
-
 
 public class MutateMethodExit extends ClassVisitor {
 
@@ -25,38 +20,74 @@ public class MutateMethodExit extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (!name.equals("fromJson") && !name.equals("toJson"))
-            return mv;
 
-        return new MutateReturn(mv, access, name, desc);
+        if(name.equals("fromJson"))
+            return new MutateReturnFromJSON(mv, access, name, desc);
+
+        if (name.equals("toJson"))
+            return new MutateReturnToJSON(mv, access, name, desc);
+
+        return mv;
+
+
     }
 
-    private class MutateReturn extends AdviceAdapter {
+    private class MutateReturnToJSON extends AdviceAdapter {
 
-        MutateReturn(final MethodVisitor mv, final int access, final String name, final String desc) {
+        MutateReturnToJSON(final MethodVisitor mv, final int access, final String name, final String desc) {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
 
         @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            if(opcode == IFNULL) {
-                super.visitJumpInsn(IFNONNULL, label);
-            } else if(opcode == IFNONNULL){
-                super.visitJumpInsn(IFNULL, label);
+        protected void onMethodExit(int opcode) {
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+
+            if(args.length < 2){
+                if(args[0].getSort() == Type.OBJECT && args[0].getDescriptor().equals("java/lang/Object;")){
+
+                    if (opcode != ATHROW && (
+                            Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                                    Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                        visitLdcInsn("\n");
+                        visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+                    }
+
+                } else {
+                    super.onMethodExit(opcode);
+                }
+
             } else {
-                super.visitJumpInsn(opcode, label);
+                super.onMethodExit(opcode);
             }
         }
 
         @Override
-        protected void onMethodExit(int opcode) {
-                super.onMethodExit(opcode);
+        public void visitMaxs(int maxStack, int maxLocals) {
+            super.visitMaxs(0, 0);
+        }
+
+    }
+
+    private class MutateReturnFromJSON extends AdviceAdapter {
+
+        MutateReturnFromJSON(final MethodVisitor mv, final int access, final String name, final String desc) {
+            super(Opcodes.ASM5, mv, access, name, desc);
         }
 
         @Override
         protected void onMethodEnter() {
-            super.onMethodEnter();
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+            if(args.length == 2 &&
+                    args[0].getDescriptor().equals("Ljava/lang/String;") &&
+                    args[1].getDescriptor().equals("Ljava/lang/Class;")){
+                visitVarInsn(ALOAD, 1);
+                visitLdcInsn("\n\n");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+                visitVarInsn(ASTORE, 1);
+            } else {
+                super.onMethodEnter();
+            }
         }
 
         @Override
