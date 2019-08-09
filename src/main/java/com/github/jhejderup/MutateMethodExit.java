@@ -39,12 +39,11 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         public void visitInsn(int opcode) {
-            super.visitInsn(opcode);
-//            if(opcode == IADD){
-//                visitInsn(ISUB);
-//            } else {
-//                super.visitInsn(opcode);
-//            }
+            if(opcode == IADD){
+                visitInsn(ISUB);
+            } else {
+                super.visitInsn(opcode);
+            }
         }
         @Override
         protected void onMethodEnter() {
