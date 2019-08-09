@@ -40,10 +40,11 @@ public class MutateMethodExit extends ClassVisitor {
         @Override
         protected void onMethodEnter() {
             Type[] args = Type.getArgumentTypes(this.methodDesc);
+            boolean no_mod = true;
             for (int i = 0; i < args.length ; i++) {
                 if(args[i].getSort() == Type.OBJECT &&
                         args[i].getDescriptor().equals("[Ljava/lang/Object;")){
-                    super.onMethodEnter();
+                    break;
                 }
                 if(args[i].getSort() == Type.OBJECT &&
                         args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
@@ -106,20 +107,25 @@ public class MutateMethodExit extends ClassVisitor {
                     //store the array in place of the iterator
                     visitVarInsn(ALOAD, arr_id);
                     visitVarInsn(ASTORE, param);
+                    no_mod = false;
+                    break;
                 }
             }
+            if(no_mod)
+                super.onMethodEnter();
 
         }
 
         @Override
         protected void onMethodExit(int opcode) {
+            boolean no_mod = true;
             Type[] args = Type.getArgumentTypes(this.methodDesc);
             for (int i = 0; i < args.length ; i++) {
 
                 if(opcode != ATHROW  &&
                         args[i].getSort() == Type.OBJECT &&
                         args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
-                    super.onMethodExit(opcode);
+                    break;
                 }
 
                 if(opcode != ATHROW  &&
@@ -129,8 +135,12 @@ public class MutateMethodExit extends ClassVisitor {
                     visitMethodInsn(INVOKESTATIC, "java/util/Collections", "addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z", false);
                     visitInsn(POP);
                     visitVarInsn(ALOAD, 2);
+                    no_mod = false;
+                    break;
                 }
             }
+            if(no_mod)
+                super.onMethodExit(opcode);
         }
 
         @Override
