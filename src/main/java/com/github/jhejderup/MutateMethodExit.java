@@ -13,6 +13,7 @@ public class MutateMethodExit extends ClassVisitor {
 
     private final String hotMethodName, hotClassName;
 
+
     public MutateMethodExit(ClassWriter cw, String methodName, String clazzName) {
         super(Opcodes.ASM5, cw);
         hotMethodName = methodName;
@@ -38,22 +39,17 @@ public class MutateMethodExit extends ClassVisitor {
 
 
         @Override
-        public void visitInsn(int opcode) {
-            if(opcode == IADD){
-                visitInsn(ISUB);
-            } else {
-                super.visitInsn(opcode);
-            }
-        }
-        @Override
-        protected void onMethodEnter() {
-            super.onMethodEnter();
-        }
-
-        @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
-
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+            //ARGS LENGTH TO ONLY CHECK ONE METHOD!
+            if (args.length < 3 && opcode != ATHROW && (
+                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                visitLdcInsn("===");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+            } else {
+                super.onMethodExit(opcode);
+            }
         }
 
         @Override
