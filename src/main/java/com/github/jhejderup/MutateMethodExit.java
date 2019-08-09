@@ -25,7 +25,7 @@ public class MutateMethodExit extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (!name.equals(this.hotMethodName))
+        if (!name.equals("fromJson") && !name.equals("toJson"))
             return mv;
 
         return new MutateReturn(mv, access, name, desc);
@@ -39,9 +39,24 @@ public class MutateMethodExit extends ClassVisitor {
 
 
         @Override
-        protected void onMethodExit(int opcode) {
+        public void visitJumpInsn(int opcode, Label label) {
+            if(opcode == IFNULL) {
+                super.visitJumpInsn(IFNONNULL, label);
+            } else if(opcode == IFNONNULL){
+                super.visitJumpInsn(IFNULL, label);
+            } else {
+                super.visitJumpInsn(opcode, label);
+            }
+        }
 
+        @Override
+        protected void onMethodExit(int opcode) {
                 super.onMethodExit(opcode);
+        }
+
+        @Override
+        protected void onMethodEnter() {
+            super.onMethodEnter();
         }
 
         @Override
