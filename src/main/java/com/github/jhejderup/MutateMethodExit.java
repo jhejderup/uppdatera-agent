@@ -39,70 +39,108 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodEnter() {
-            System.out.println(this.methodDesc);
-            boolean no_mod = true;
             Type[] args = Type.getArgumentTypes(this.methodDesc);
+            boolean no_mod = true;
             for (int i = 0; i < args.length ; i++) {
-                if(
-                        args[i].getSort() == Type.OBJECT &&
-                        args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
-
-
-                    Type file = Type.getType("Ljava/io/File;");
-                    int id = newLocal(file);
-                    Label label0 = new Label();
-                    Label label1 = new Label();
-                    Label label2 = new Label();
-                    Label label4 = new Label();
-                    visitTryCatchBlock(label0, label1, label2, "java/lang/Exception");
-                    visitLabel(label0);
-                    visitTypeInsn(NEW, "java/io/File");
-                    visitInsn(DUP);
-                    visitLdcInsn("hacked123-iter.txt");
-                    visitMethodInsn(INVOKESPECIAL, "java/io/File", "<init>", "(Ljava/lang/String;)V", false);
-                    visitVarInsn(ASTORE, id);
-                    visitVarInsn(ALOAD, id);
-                    visitMethodInsn(INVOKEVIRTUAL, "java/io/File", "createNewFile", "()Z", false);
-                    visitInsn(POP);
-                    visitLabel(label1);
-                    visitJumpInsn(GOTO, label4);
-                    visitLabel(label2);
-                    visitVarInsn(ASTORE, id);
-                    visitLabel(label4);
-                    no_mod=false;
+                if(args[i].getSort() == Type.OBJECT &&
+                        args[i].getDescriptor().equals("[Ljava/lang/Object;")){
                     break;
                 }
+                if(args[i].getSort() == Type.OBJECT &&
+                        args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
+                    // Iterable parameter
+                    int off = (this.methodAccess | Opcodes.ACC_STATIC) == 0 ? 0 : 1;
+                    int param = 2;
+                    System.out.println("Parameter: " + param);
+                    //New var to store iterator
+                    Type it_type = Type.getType("Ljava/util/Iterator;");
+                    int it_id = newLocal(it_type);
+                    System.out.println("ITR_ID: " + it_id );
 
-                if(
-                        args[i].getSort() == Type.ARRAY &&
-                        args[i].getDescriptor().equals("[Ljava/lang/Object;")){
-                    Type file = Type.getType("Ljava/io/File;");
-                    int id = newLocal(file);
-                    Label label0 = new Label();
-                    Label label1 = new Label();
-                    Label label2 = new Label();
-                    Label label4 = new Label();
-                    visitTryCatchBlock(label0, label1, label2, "java/lang/Exception");
-                    visitLabel(label0);
-                    visitTypeInsn(NEW, "java/io/File");
+                    // New var to store array
+                    Type arr_type = Type.getType("Ljava/util/Collection;");
+                    int arr_id = newLocal(arr_type);
+                    System.out.println("ARR_ID: " + arr_id );
+
+                    //New generic placeholder var
+                    int gen_id = newLocal(Type.getType("Ljava/lang/Object;"));
+                    System.out.println("LOOP_ID: " + gen_id);
+
+                    // Create new array and store it
+                    visitTypeInsn(NEW, "java/util/ArrayList");
                     visitInsn(DUP);
-                    visitLdcInsn("hacked123-elem.txt");
-                    visitMethodInsn(INVOKESPECIAL, "java/io/File", "<init>", "(Ljava/lang/String;)V", false);
-                    visitVarInsn(ASTORE, id);
-                    visitVarInsn(ALOAD, id);
-                    visitMethodInsn(INVOKEVIRTUAL, "java/io/File", "createNewFile", "()Z", false);
+                    visitMethodInsn(INVOKESPECIAL, "java/util/ArrayList", "<init>", "()V", false);
+                    visitVarInsn(ASTORE, arr_id);
+
+                    // Load iterator parameter and store it
+                    visitVarInsn(ALOAD, param);
+                    visitMethodInsn(INVOKEINTERFACE, "java/lang/Iterable", "iterator", "()Ljava/util/Iterator;", true);
+                    visitVarInsn(ASTORE, it_id);
+
+                    //Load iterator and check hasNext
+                    Label doLoop = new Label();
+                    visitLabel(doLoop);
+                    visitVarInsn(ALOAD, it_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true);
+                    Label doneLoop = new Label();
+
+                    //loop and add elements to a new list
+                    visitJumpInsn(IFEQ, doneLoop);
+                    visitVarInsn(ALOAD, it_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true);
+                    visitVarInsn(ASTORE, gen_id);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ALOAD, gen_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "add", "(Ljava/lang/Object;)Z", true);
                     visitInsn(POP);
-                    visitLabel(label1);
-                    visitJumpInsn(GOTO, label4);
-                    visitLabel(label2);
-                    visitVarInsn(ASTORE, id);
-                    visitLabel(label4);
-                    no_mod=false;
+                    visitJumpInsn(GOTO, doLoop);
+                    //done with adding all elements
+                    //duplicate array with the same elements
+                    visitLabel(doneLoop);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ALOAD, arr_id);
+                    visitMethodInsn(INVOKEINTERFACE, "java/util/Collection", "addAll", "(Ljava/util/Collection;)Z", true);
+                    visitInsn(POP);
+                    //shuffle the list
+//                    visitVarInsn(ALOAD, arr_id);
+//                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
+                    //store the array in place of the iterator
+                    visitVarInsn(ALOAD, arr_id);
+                    visitVarInsn(ASTORE, param);
+                    no_mod = false;
                     break;
                 }
             }
             if(no_mod)
                 super.onMethodEnter();
+
+        }
+
+        @Override
+        protected void onMethodExit(int opcode) {
+            boolean no_mod = true;
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+            for (int i = 0; i < args.length ; i++) {
+
+                if(opcode != ATHROW  &&
+                        args[i].getSort() == Type.OBJECT &&
+                        args[i].getDescriptor().equals("Ljava/lang/Iterable;")){
+                    break;
+                }
+
+                if(opcode != ATHROW  &&
+                        args[i].getSort() == Type.ARRAY &&
+                        args[i].getDescriptor().equals("[Ljava/lang/Object;")){
+                    visitVarInsn(ALOAD, 0);
+                    visitMethodInsn(INVOKESTATIC, "java/util/Collections", "addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z", false);
+                    visitInsn(POP);
+                    visitVarInsn(ALOAD, 2);
+                    no_mod = false;
+                    break;
+                }
+            }
+            if(no_mod)
+                super.onMethodExit(opcode);
         }
 
         @Override
