@@ -49,7 +49,7 @@ public class MutateMethodExit extends ClassVisitor {
                     if (opcode != ATHROW && (
                             Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
                                     Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-                        visitLdcInsn("\n");
+                        visitLdcInsn("asdasdas");
                         visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
                     }
 
@@ -82,7 +82,7 @@ public class MutateMethodExit extends ClassVisitor {
                     args[0].getDescriptor().equals("Ljava/lang/String;") &&
                     args[1].getDescriptor().equals("Ljava/lang/Class;")){
                 visitVarInsn(ALOAD, 1);
-                visitLdcInsn("\n\n");
+                visitLdcInsn("asdasdas");
                 visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
                 visitVarInsn(ASTORE, 1);
             } else {
