@@ -48,17 +48,16 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
-//            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
-//                Label branch = new Label();
-//                Label rtn = new Label();
-//                visitJumpInsn(IFNE, branch);
-//                visitInsn(ICONST_1);
-//                visitJumpInsn(GOTO, rtn);
-//                visitLabel(branch);
-//                visitInsn(ICONST_0);
-//                visitLabel(rtn);
-//            }
+            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
+                Label branch = new Label();
+                Label rtn = new Label();
+                visitJumpInsn(IFNE, branch);
+                visitInsn(ICONST_1);
+                visitJumpInsn(GOTO, rtn);
+                visitLabel(branch);
+                visitInsn(ICONST_0);
+                visitLabel(rtn);
+            }
         }
 
         @Override
