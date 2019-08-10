@@ -50,22 +50,11 @@ public class MutateMethodExit extends ClassVisitor {
 
 
         @Override
-        protected void onMethodEnter() {
-            super.onMethodEnter();
-        }
-
-        @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            if(opcode == IF_ICMPLE){
-                visitJumpInsn(IF_ICMPGT, label);
-            } else {
-                super.visitJumpInsn(opcode, label);
-            }
-        }
-
-        @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
+            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.INT_TYPE) {
+                visitIntInsn(SIPUSH, 10);
+                visitInsn(IADD);
+            }
         }
 
         @Override
