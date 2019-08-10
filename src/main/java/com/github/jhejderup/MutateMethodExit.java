@@ -65,10 +65,11 @@ public class MutateMethodExit extends ClassVisitor {
         public void visitJumpInsn(int opcode, Label label) {
            Type[] args = Type.getArgumentTypes(this.methodDesc);
 
-           if(args.length > 3)
-               super.visitJumpInsn(opcodeMap.get(opcode), label);
-           else
+           if(opcode == IFNONNULL){
+               visitJumpInsn(IFNULL, label);
+           } else {
                super.visitJumpInsn(opcode, label);
+           }
         }
 
         @Override
