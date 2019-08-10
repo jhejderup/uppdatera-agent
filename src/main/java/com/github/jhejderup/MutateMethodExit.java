@@ -13,27 +13,6 @@ import static org.objectweb.asm.Opcodes.*;
 public class MutateMethodExit extends ClassVisitor {
 
     private final String hotMethodName, hotClassName;
-    private static Map<Integer, Integer> opcodeMap = new HashMap<Integer, Integer>();
-
-    static {
-        opcodeMap.put(IF_ACMPEQ, IF_ACMPNE);
-        opcodeMap.put(IF_ACMPNE, IF_ACMPEQ);
-        opcodeMap.put(IF_ICMPEQ, IF_ICMPNE);
-        opcodeMap.put(IF_ICMPGE, IF_ICMPLT);
-        opcodeMap.put(IF_ICMPGT, IF_ICMPLE);
-        opcodeMap.put(IF_ICMPLE, IF_ICMPGT);
-        opcodeMap.put(IF_ICMPLT, IF_ICMPGE);
-        opcodeMap.put(IF_ICMPNE, IF_ICMPEQ);
-        opcodeMap.put(IFEQ, IFNE);
-        opcodeMap.put(IFGE, IFLT);
-        opcodeMap.put(IFGT, IFLE);
-        opcodeMap.put(IFLE, IFGT);
-        opcodeMap.put(IFLT, IFGE);
-        opcodeMap.put(IFNE, IFEQ);
-        opcodeMap.put(IFNONNULL, IFNULL);
-        opcodeMap.put(IFNULL, IFNONNULL);
-    }
-
 
     public MutateMethodExit(ClassWriter cw, String methodName, String clazzName) {
         super(Opcodes.ASM5, cw);
@@ -61,20 +40,18 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-        @Override
-        public void visitJumpInsn(int opcode, Label label) {
-           Type[] args = Type.getArgumentTypes(this.methodDesc);
-
-           if(opcode == IFNONNULL){
-               visitJumpInsn(IFNULL, label);
-           } else {
-               super.visitJumpInsn(opcode, label);
-           }
-        }
 
         @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
+            Type[] args = Type.getArgumentTypes(this.methodDesc);
+            if (opcode != ATHROW && (
+                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                visitLdcInsn("===");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+            } else {
+                super.onMethodExit(opcode);
+            }
         }
 
         @Override

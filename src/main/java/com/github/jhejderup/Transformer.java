@@ -17,7 +17,7 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("org/apache/commons/codec/binary/Base64")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "encodeBase64", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "encodeBase64String", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
