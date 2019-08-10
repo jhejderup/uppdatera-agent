@@ -32,10 +32,11 @@ public class MutateMethodExit extends ClassVisitor {
 
         Type[] args = Type.getArgumentTypes(desc);
 
-        if(args.length == 2
-                && args[0].getDescriptor().equals("Ljava/io/InputStream;")
-                && args[1].getDescriptor().equals("Ljava/io/OutputStream;")){
+        if(args.length == 1 && args[0].getDescriptor().equals("Ljava/io/InputStream;")){
             return new MutateReturn(mv, access, name, desc);
+        } else if(args.length == 2
+                && args[0].getDescriptor().equals("Ljava/io/InputStream;")
+                && args[1].getDescriptor().equals("Ljava/lang/String;")) {
         } else {
             return mv;
         }
@@ -51,10 +52,7 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.INT_TYPE) {
-                visitIntInsn(SIPUSH, 10);
-                visitInsn(IADD);
-            }
+            super.onMethodExit(opcode);
         }
 
         @Override
