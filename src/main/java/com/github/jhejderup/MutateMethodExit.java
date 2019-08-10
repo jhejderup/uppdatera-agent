@@ -27,10 +27,7 @@ public class MutateMethodExit extends ClassVisitor {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
 
-        if (!name.equals("isBlank")
-                && !name.equals("isEmpty")
-                && !name.equals("isNotBlank")
-                && !name.equals("isNotEmpty"))
+        if (!name.equals(this.hotMethodName))
             return mv;
 
 
@@ -45,19 +42,18 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
+//        @Override
+//        public void visitJumpInsn(int opcode, Label label) {
+//
+//            if(opcode == IFNONNULL)
+//                visitJumpInsn(IFNULL,label);
+//            else
+//                super.visitJumpInsn(opcode, label);
+//        }
 
         @Override
         protected void onMethodExit(int opcode) {
-            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
-                Label branch = new Label();
-                Label rtn = new Label();
-                visitJumpInsn(IFNE, branch);
-                visitInsn(ICONST_1);
-                visitJumpInsn(GOTO, rtn);
-                visitLabel(branch);
-                visitInsn(ICONST_0);
-                visitLabel(rtn);
-            }
+          super.onMethodExit(opcode);
         }
 
         @Override
