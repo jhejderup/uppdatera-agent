@@ -41,19 +41,8 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
-        protected void onMethodEnter() {
-            super.onMethodEnter();
-        }
+        protected void onMethodEnter() { super.onMethodEnter(); }
 
-        @Override
-        public void visitInsn(int opcode) {
-
-            if(opcode == ICONST_4){
-                visitInsn(ICONST_2);
-            } else {
-                super.visitInsn(opcode);
-            }
-        }
 
         @Override
         protected void onMethodExit(int opcode) {
