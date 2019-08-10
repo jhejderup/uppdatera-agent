@@ -40,6 +40,21 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
+        @Override
+        protected void onMethodEnter() {
+            super.onMethodEnter();
+        }
+
+        @Override
+        public void visitInsn(int opcode) {
+
+            if(opcode == ISUB){
+                visitInsn(IADD);
+            } else {
+                super.visitInsn(opcode);
+            }
+
+        }
 
         @Override
         protected void onMethodExit(int opcode) {
