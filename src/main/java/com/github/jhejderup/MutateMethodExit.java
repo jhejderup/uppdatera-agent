@@ -50,7 +50,9 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
+            visitVarInsn(ALOAD, 1);
+            visitMethodInsn(INVOKEVIRTUAL, "java/io/File", "mkdir", "()Z", false);
+            visitInsn(POP);
         }
 
         @Override
