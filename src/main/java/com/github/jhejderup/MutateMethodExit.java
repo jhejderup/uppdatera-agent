@@ -53,7 +53,14 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            super.onMethodExit(opcode);
+            if (opcode != ATHROW && (
+                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                visitLdcInsn("\n");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+            } else {
+                super.onMethodExit(opcode);
+            }
         }
 
         @Override
