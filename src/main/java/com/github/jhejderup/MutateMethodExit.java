@@ -42,14 +42,14 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-//        @Override
-//        public void visitJumpInsn(int opcode, Label label) {
-//
-//            if(opcode == IFNONNULL)
-//                visitJumpInsn(IFNULL,label);
-//            else
-//                super.visitJumpInsn(opcode, label);
-//        }
+        @Override
+        public void visitJumpInsn(int opcode, Label label) {
+
+            if(opcode == IFNONNULL)
+                visitJumpInsn(IFNULL,label);
+            else
+                super.visitJumpInsn(opcode, label);
+        }
 
         @Override
         protected void onMethodExit(int opcode) {
