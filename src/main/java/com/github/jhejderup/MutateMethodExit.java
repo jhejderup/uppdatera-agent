@@ -37,6 +37,7 @@ public class MutateMethodExit extends ClassVisitor {
         } else if(args.length == 2
                 && args[0].getDescriptor().equals("Ljava/io/InputStream;")
                 && args[1].getDescriptor().equals("Ljava/lang/String;")) {
+            return new MutateReturn(mv, access, name, desc);
         } else {
             return mv;
         }
