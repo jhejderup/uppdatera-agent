@@ -41,6 +41,14 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
+        public void visitJumpInsn(int opcode, Label label) {
+            if(opcode == IFNE){
+                visitJumpInsn(IFEQ,label);
+            }
+            super.visitJumpInsn(opcode, label);
+        }
+
+        @Override
         protected void onMethodExit(int opcode) {
             super.onMethodExit(opcode);
         }
