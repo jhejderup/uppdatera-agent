@@ -17,7 +17,7 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("org/antlr/v4/runtime/atn/ATNDeserializer")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "deserialize", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "toUUID", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }

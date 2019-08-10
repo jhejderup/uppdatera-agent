@@ -48,12 +48,11 @@ public class MutateMethodExit extends ClassVisitor {
         @Override
         public void visitInsn(int opcode) {
 
-            if(opcode == ISUB){
-                visitInsn(IADD);
+            if(opcode == ICONST_4){
+                visitInsn(ICONST_2);
             } else {
                 super.visitInsn(opcode);
             }
-
         }
 
         @Override
