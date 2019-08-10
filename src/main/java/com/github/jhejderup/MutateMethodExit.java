@@ -42,20 +42,18 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-        @Override
-        public void visitJumpInsn(int opcode, Label label) {
-
-            if(opcode == IFNONNULL)
-                visitJumpInsn(IFNULL,label);
-            else
-                super.visitJumpInsn(opcode, label);
-        }
 
         @Override
         protected void onMethodExit(int opcode) {
-          super.onMethodExit(opcode);
+            if (opcode != ATHROW && (
+                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
+                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
+                visitLdcInsn("\n");
+                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+            } else {
+                super.onMethodExit(opcode);
+            }
         }
-
         @Override
         public void visitMaxs(int maxStack, int maxLocals) {
             super.visitMaxs(0, 0);
