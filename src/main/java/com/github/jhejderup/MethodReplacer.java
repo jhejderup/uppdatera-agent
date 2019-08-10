@@ -25,12 +25,15 @@ public class MethodReplacer extends ClassVisitor {
 
 
 
-        if(!name.contains(hotMethodName) &&
-                !(args.length == 1) &&
-                !(args[0].getDescriptor().equals("Ljava/io/InputStream;")))
+        if(!name.contains(hotMethodName))
             return mv;
 
-        return new Replacer(mv);
+        if(args.length == 1 && args[0].getDescriptor().equals("Ljava/io/InputStream;")){
+            return new Replacer(mv);
+        } else {
+            return mv;
+        }
+
     }
 
     private class Replacer extends MethodVisitor {
