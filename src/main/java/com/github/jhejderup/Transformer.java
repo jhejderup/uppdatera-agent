@@ -17,8 +17,8 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("org/apache/commons/io/IOUtils")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MethodReplacer visitor = new MethodReplacer(writer, "closeQuietly", className);
-          //  MutateMethodExit visitor = new MutateMethodExit(writer, "closeQuietly", className);
+         //   MethodReplacer visitor = new MethodReplacer(writer, "copy", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "copy", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }

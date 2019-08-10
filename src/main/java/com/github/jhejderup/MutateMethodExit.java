@@ -30,7 +30,15 @@ public class MutateMethodExit extends ClassVisitor {
         if (!name.equals(this.hotMethodName))
             return mv;
 
-        return new MutateReturn(mv, access, name, desc);
+        Type[] args = Type.getArgumentTypes(desc);
+
+        if(args.length == 2
+                && args[0].getDescriptor().equals("Ljava/io/InputStream;")
+                && args[1].getDescriptor().equals("Ljava/io/OutputStream;")){
+            return new MutateReturn(mv, access, name, desc);
+        } else {
+            return mv;
+        }
 
     }
 
@@ -40,6 +48,20 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
+
+        @Override
+        protected void onMethodEnter() {
+            super.onMethodEnter();
+        }
+
+//        @Override
+//        public void visitJumpInsn(int opcode, Label label) {
+//            if(opcode == IF_ICMPLE){
+//                visitJumpInsn(IF_ICMPGT, label);
+//            } else {
+//                super.visitJumpInsn(opcode, label);
+//            }
+//        }
 
         @Override
         protected void onMethodExit(int opcode) {

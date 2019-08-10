@@ -23,8 +23,6 @@ public class MethodReplacer extends ClassVisitor {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         Type[] args =  Type.getArgumentTypes(desc);
 
-
-
         if(!name.contains(hotMethodName))
             return mv;
 
