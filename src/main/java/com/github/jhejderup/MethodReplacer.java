@@ -1,5 +1,6 @@
 package com.github.jhejderup;
 
+import com.sun.org.apache.bcel.internal.generic.IRETURN;
 import org.objectweb.asm.*;
 import org.objectweb.asm.Type;
 
@@ -20,7 +21,13 @@ public class MethodReplacer extends ClassVisitor {
             int access, String name, String desc, String signature, String[] exceptions) {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if(!name.contains(hotMethodName))
+        Type[] args =  Type.getArgumentTypes(desc);
+
+
+
+        if(!name.contains(hotMethodName) &&
+                !(args.length == 1) &&
+                !(args[0].getDescriptor().equals("Ljava/io/InputStream;")))
             return mv;
 
         return new Replacer(mv);
@@ -42,22 +49,7 @@ public class MethodReplacer extends ClassVisitor {
         @Override
         public void visitCode() {
             mv.visitCode();
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            Label label1 = new Label();
-            mv.visitJumpInsn(Opcodes.IFNULL, label1);
-            mv.visitLdcInsn("");
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
-            Label label2 = new Label();
-            mv.visitJumpInsn(Opcodes.IFEQ, label2);
-            mv.visitLabel(label1);
-            mv.visitInsn(Opcodes.ICONST_1);
-            Label label3 = new Label();
-            mv.visitJumpInsn(Opcodes.GOTO, label3);
-            mv.visitLabel(label2);
-            mv.visitInsn(Opcodes.ICONST_0);
-            mv.visitLabel(label3);
-            mv.visitInsn(Opcodes.IRETURN);
+            mv.visitInsn(Opcodes.RETURN);
         }
 
         @Override
