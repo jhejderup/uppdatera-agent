@@ -14,10 +14,10 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("org/apache/commons/codec/binary/Base64")) {
+        if (className.equals("org/apache/commons/io/FileUtils")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "encodeBase64String", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "deleteDirectory", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
