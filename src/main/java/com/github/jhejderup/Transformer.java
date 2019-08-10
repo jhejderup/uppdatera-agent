@@ -14,7 +14,7 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("org/apache/commons/io/IOUtils")) {
+        if (className.equals("org/apache/commons/lang3/StringUtils")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
          //   MethodReplacer visitor = new MethodReplacer(writer, "copy", className);

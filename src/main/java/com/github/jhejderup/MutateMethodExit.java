@@ -27,20 +27,15 @@ public class MutateMethodExit extends ClassVisitor {
 
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
 
-        if (!name.equals(this.hotMethodName))
+        if (!name.equals("isBlank")
+                && !name.equals("isEmpty")
+                && !name.equals("isNotBlank")
+                && !name.equals("isNotEmpty"))
             return mv;
 
-        Type[] args = Type.getArgumentTypes(desc);
 
-        if(args.length == 1 && args[0].getDescriptor().equals("Ljava/io/InputStream;")){
-            return new MutateReturn(mv, access, name, desc);
-        } else if(args.length == 2
-                && args[0].getDescriptor().equals("Ljava/io/InputStream;")
-                && args[1].getDescriptor().equals("Ljava/lang/String;")) {
-            return new MutateReturn(mv, access, name, desc);
-        } else {
-            return mv;
-        }
+        return new MutateReturn(mv, access, name, desc);
+
 
     }
 
@@ -53,14 +48,17 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            if (opcode != ATHROW && (
-                    Type.getReturnType(this.methodDesc).getSort() == Type.OBJECT &&
-                            Type.getReturnType(this.methodDesc).getDescriptor().equals("Ljava/lang/String;"))) {
-                visitLdcInsn("\n");
-                visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
-            } else {
-                super.onMethodExit(opcode);
-            }
+            super.onMethodExit(opcode);
+//            if (opcode != ATHROW && Type.getReturnType(this.methodDesc) == Type.BOOLEAN_TYPE) {
+//                Label branch = new Label();
+//                Label rtn = new Label();
+//                visitJumpInsn(IFNE, branch);
+//                visitInsn(ICONST_1);
+//                visitJumpInsn(GOTO, rtn);
+//                visitLabel(branch);
+//                visitInsn(ICONST_0);
+//                visitLabel(rtn);
+//            }
         }
 
         @Override
