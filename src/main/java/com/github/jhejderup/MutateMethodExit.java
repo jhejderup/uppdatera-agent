@@ -40,19 +40,10 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-        @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            if(opcode == IFNE){
-                visitJumpInsn(IFEQ,label);
-            }
-            super.visitJumpInsn(opcode, label);
-        }
 
         @Override
         protected void onMethodExit(int opcode) {
-            visitVarInsn(ALOAD, 1);
-            visitMethodInsn(INVOKEVIRTUAL, "java/io/File", "mkdir", "()Z", false);
-            visitInsn(POP);
+            super.onMethodExit(opcode);
         }
 
         @Override
