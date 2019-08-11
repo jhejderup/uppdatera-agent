@@ -43,12 +43,11 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
-        protected void onMethodExit(int opcode) {
-            int rtn_dt = newLocal(Type.getType("Lorg/joda/time/DateTime;"));
-            visitMethodInsn(INVOKEVIRTUAL, "org/joda/time/DateTime", "toDateTimeISO", "()Lorg/joda/time/DateTime;", false);
-            visitVarInsn(ASTORE, rtn_dt);
-            visitVarInsn(ALOAD, rtn_dt);
-
+        public void visitInsn(int opcode) {
+            if(opcode == ICONST_0)
+                visitInsn(ICONST_2);
+            else
+                super.visitInsn(opcode);
         }
 
         @Override
