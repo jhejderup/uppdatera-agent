@@ -26,9 +26,10 @@ public class MethodReplacer extends ClassVisitor {
         if(!name.contains(hotMethodName))
             return mv;
 
-        if(args.length == 2
-                && args[0].getDescriptor().equals("Ljava/lang/Iterable;")
-                && args[1].getDescriptor().equals("Ljava/lang/String;")){
+        if(args.length == 3
+                && args[0].getDescriptor().equals("Ljava/lang/String;")
+                && args[1].getDescriptor().equals("Ljava/lang/String;")
+                && args[2].getDescriptor().equals("Ljava/lang/String;")){
             return new Replacer(mv);
         } else {
             return mv;
@@ -52,9 +53,12 @@ public class MethodReplacer extends ClassVisitor {
         @Override
         public void visitCode() {
             mv.visitCode();
-            mv.visitInsn(Opcodes.ACONST_NULL);
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            mv.visitVarInsn(Opcodes.ALOAD, 2);
+            mv.visitInsn(Opcodes.ICONST_1);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "org/apache/commons/lang3/StringUtils", "replace", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;", false);
             mv.visitInsn(Opcodes.ARETURN);
-
         }
 
         @Override

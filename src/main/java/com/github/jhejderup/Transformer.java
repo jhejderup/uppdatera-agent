@@ -17,8 +17,8 @@ public class Transformer implements ClassFileTransformer {
         if (className.equals("org/apache/commons/lang3/StringUtils")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-          //  MethodReplacer visitor = new MethodReplacer(writer, "join", className);
-           MutateMethodExit visitor = new MutateMethodExit(writer, "replace", className);
+            MethodReplacer visitor = new MethodReplacer(writer, "replace", className);
+         //  MutateMethodExit visitor = new MutateMethodExit(writer, "replace", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
