@@ -56,7 +56,9 @@ public class MethodReplacer extends ClassVisitor {
             mv.visitVarInsn(Opcodes.ALOAD, 0);
             mv.visitVarInsn(Opcodes.ALOAD, 1);
             mv.visitVarInsn(Opcodes.ALOAD, 2);
-            mv.visitInsn(Opcodes.ICONST_1);
+            mv.visitLdcInsn("  ");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+            mv.visitInsn(Opcodes.ICONST_M1);
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "org/apache/commons/lang3/StringUtils", "replace", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;", false);
             mv.visitInsn(Opcodes.ARETURN);
         }
