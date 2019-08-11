@@ -18,7 +18,7 @@ public class Transformer implements ClassFileTransformer {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
          //   MethodReplacer visitor = new MethodReplacer(writer, "copy", className);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "capitalize", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "join", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
