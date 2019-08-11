@@ -51,8 +51,8 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodEnter() {
-            visitVarInsn(ALOAD, 1);
-            visitLdcInsn("/upp/");
+            visitVarInsn(ALOAD, 0);
+            visitLdcInsn("\n\n\n");
             visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
             visitInsn(POP);
 
