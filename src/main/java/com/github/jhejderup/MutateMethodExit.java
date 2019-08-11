@@ -30,15 +30,10 @@ public class MutateMethodExit extends ClassVisitor {
         if (!name.equals(this.hotMethodName))
             return mv;
 
-        Type[] args = Type.getArgumentTypes(desc);
 
-        if(args.length == 2
-                && args[0].getDescriptor().equals("Ljava/lang/String;")
-                && args[1].getDescriptor().equals("Ljava/lang/String;")) {
-            return new MutateReturn(mv, access, name, desc);
-        } else {
-            return mv;
-        }
+
+        return new MutateReturn(mv, access, name, desc);
+
 
 
     }
@@ -47,15 +42,6 @@ public class MutateMethodExit extends ClassVisitor {
 
         MutateReturn(final MethodVisitor mv, final int access, final String name, final String desc) {
             super(Opcodes.ASM5, mv, access, name, desc);
-        }
-
-        @Override
-        protected void onMethodEnter() {
-            visitVarInsn(ALOAD, 0);
-            visitLdcInsn("\n\n\n");
-            visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
-            visitInsn(POP);
-
         }
 
         @Override

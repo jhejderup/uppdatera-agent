@@ -14,11 +14,11 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("org/jsoup/Jsoup")) {
+        if (className.equals("org/jsoup/nodes/Element")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
           //  MethodReplacer visitor = new MethodReplacer(writer, "replace", className);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "parse", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "select", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
