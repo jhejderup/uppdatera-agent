@@ -40,6 +40,8 @@ public class MutateMethodExit extends ClassVisitor {
 
     private class MutateReturn extends AdviceAdapter {
 
+
+
         MutateReturn(final MethodVisitor mv, final int access, final String name, final String desc) {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
@@ -47,6 +49,12 @@ public class MutateMethodExit extends ClassVisitor {
         @Override
         public void visitMaxs(int maxStack, int maxLocals) {
             super.visitMaxs(0, 0);
+        }
+
+        @Override
+        protected void onMethodExit(int opcode) {
+            visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
+            visitVarInsn(ALOAD, 2);
         }
 
         @Override
