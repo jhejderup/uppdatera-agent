@@ -49,11 +49,10 @@ public class MutateMethodExit extends ClassVisitor {
 
                 if(value.equals("true")){
                     visitLdcInsn("false");
-                }
-
-
-                if(value.equals("5")){
+                } else if(value.equals("5")){
                     visitLdcInsn("0");
+                } else {
+                    super.visitLdcInsn(value);
                 }
 
             } else {
