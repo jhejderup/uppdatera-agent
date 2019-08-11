@@ -56,7 +56,7 @@ public class MutateMethodExit extends ClassVisitor {
                 visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
             } else {
                 super.onMethodExit(opcode);
-            }]
+            }
 
         }
 
