@@ -42,11 +42,11 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-//        @Override
-//        protected void onMethodExit(int opcode) {
-//            visitLdcInsn(new Long(10L));
-//            visitInsn(LADD);
-//        }
+        @Override
+        protected void onMethodExit(int opcode) {
+            visitLdcInsn(new Long(10L));
+            visitInsn(LADD);
+        }
 
         @Override
         public void visitMaxs(int maxStack, int maxLocals) {
