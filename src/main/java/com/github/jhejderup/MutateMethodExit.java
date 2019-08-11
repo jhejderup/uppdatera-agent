@@ -52,14 +52,6 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
         @Override
-        protected void onMethodExit(int opcode) {
-            visitInsn(ICONST_0);
-            visitMethodInsn(INVOKEVIRTUAL, "java/util/ArrayList", "remove", "(I)Ljava/lang/Object;", false);
-            visitInsn(POP);
-            visitVarInsn(AALOAD, 2);
-        }
-
-        @Override
         public void visitEnd() {
             super.visitEnd();
         }
