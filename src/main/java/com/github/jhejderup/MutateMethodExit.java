@@ -30,8 +30,15 @@ public class MutateMethodExit extends ClassVisitor {
         if (!name.equals(this.hotMethodName))
             return mv;
 
+        Type[] args = Type.getArgumentTypes(desc);
 
-        return new MutateReturn(mv, access, name, desc);
+        if(args.length == 2
+                && args[0].getDescriptor().equals("Ljava/lang/String;")
+                && args[1].getDescriptor().equals("Ljava/lang/String;")) {
+            return new MutateReturn(mv, access, name, desc);
+        } else {
+            return mv;
+        }
 
 
     }
@@ -44,11 +51,7 @@ public class MutateMethodExit extends ClassVisitor {
 
         @Override
         protected void onMethodExit(int opcode) {
-            int rtn_dt = newLocal(Type.getType("Lorg/joda/time/DateTime;"));
-            visitInsn(ICONST_2);
-            visitMethodInsn(INVOKEVIRTUAL, "org/joda/time/DateTime", "plusHours", "(I)Lorg/joda/time/DateTime;", false);
-            visitVarInsn(ASTORE, rtn_dt);
-            visitVarInsn(ALOAD, rtn_dt);
+            super.onMethodExit(opcode);
         }
 
         @Override
