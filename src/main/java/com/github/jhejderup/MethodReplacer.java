@@ -26,7 +26,9 @@ public class MethodReplacer extends ClassVisitor {
         if(!name.contains(hotMethodName))
             return mv;
 
-        if(args.length == 1 && args[0].getDescriptor().equals("Ljava/io/InputStream;")){
+        if(args.length == 2
+                && args[0].getDescriptor().equals("Ljava/lang/Iterable;")
+                && args[1].getDescriptor().equals("Ljava/lang/String;")){
             return new Replacer(mv);
         } else {
             return mv;
@@ -50,7 +52,9 @@ public class MethodReplacer extends ClassVisitor {
         @Override
         public void visitCode() {
             mv.visitCode();
-            mv.visitInsn(Opcodes.RETURN);
+            mv.visitInsn(Opcodes.ACONST_NULL);
+            mv.visitInsn(Opcodes.ARETURN);
+
         }
 
         @Override
