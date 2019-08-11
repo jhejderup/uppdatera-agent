@@ -42,23 +42,11 @@ public class MutateMethodExit extends ClassVisitor {
             super(Opcodes.ASM5, mv, access, name, desc);
         }
 
-        @Override
-        public void visitLdcInsn(Object value) {
-            if(value instanceof String){
-                String val = (String) value;
-
-                if(value.equals("true")){
-                    visitLdcInsn("false");
-                } else if(value.equals("5")){
-                    visitLdcInsn("0");
-                } else {
-                    super.visitLdcInsn(value);
-                }
-
-            } else {
-                super.visitLdcInsn(value);
-            }
-        }
+//        @Override
+//        protected void onMethodExit(int opcode) {
+//            visitLdcInsn(new Long(10L));
+//            visitInsn(LADD);
+//        }
 
         @Override
         public void visitMaxs(int maxStack, int maxLocals) {
