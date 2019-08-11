@@ -14,11 +14,11 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-        if (className.equals("org/joda/time/base/BaseDateTime")) {
+        if (className.equals("org/joda/time/format/DateTimeFormatter")) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
           //  MethodReplacer visitor = new MethodReplacer(writer, "replace", className);
-            MutateMethodExit visitor = new MutateMethodExit(writer, "getMillis", className);
+            MutateMethodExit visitor = new MutateMethodExit(writer, "parseDateTime", className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
