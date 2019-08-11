@@ -50,12 +50,10 @@ public class MutateMethodExit extends ClassVisitor {
 
         if (!name.equals(this.hotMethodName))
             return mv;
-        Type[] args =  Type.getArgumentTypes(desc);
-        if(args.length == 0){
-            return new MutateReturn(mv, access, name, desc);
-        } else {
-            return mv;
-        }
+
+
+        return new MutateReturn(mv, access, name, desc);
+
 
     }
 
@@ -66,10 +64,10 @@ public class MutateMethodExit extends ClassVisitor {
         }
 
 
-//        @Override
-//        public void visitJumpInsn(int opcode, Label label) {
-//            super.visitJumpInsn(opcodeMap.get(opcode), label);
-//        }
+        @Override
+        public void visitJumpInsn(int opcode, Label label) {
+            super.visitJumpInsn(opcodeMap.get(opcode), label);
+        }
 
 
         @Override
