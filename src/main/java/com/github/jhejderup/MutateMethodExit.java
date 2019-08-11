@@ -54,7 +54,7 @@ public class MutateMethodExit extends ClassVisitor {
         @Override
         protected void onMethodExit(int opcode) {
             visitMethodInsn(INVOKESTATIC, "java/util/Collections", "shuffle", "(Ljava/util/List;)V", false);
-            visitVarInsn(ALOAD, 2);
+            visitVarInsn(AALOAD, 2);
         }
 
         @Override
