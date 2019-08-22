@@ -4,7 +4,9 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.net.JarURLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
@@ -15,10 +17,16 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+
 public class UppdateraAgent {
 
     public static void premain(String agentOps, Instrumentation inst) {
+
         try {
+            File file = new File(agentOps);
+            JarFile jfagent = new JarFile(file);
+            inst.appendToBootstrapClassLoaderSearch(jfagent);
+
             File[] depz = Maven.configureResolver()
                     .workOffline()
                     .loadPomFromFile("pom.xml")
@@ -53,6 +61,8 @@ public class UppdateraAgent {
                             continue;
                         }
                     }
+                } catch (Exception e) {
+                    continue;
                 }
             }
 
@@ -61,6 +71,8 @@ public class UppdateraAgent {
                 inst.addTransformer(transformer);
             }
         } catch (Exception e) {
+            System.out.println("Error!");
+            e.printStackTrace();
         }
     }
 

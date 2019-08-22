@@ -26,6 +26,7 @@ public class Transformer implements ClassFileTransformer {
 
         String[] segments = className.split("/");
         String pkgName = String.join("/", Arrays.copyOf(segments, segments.length - 1));
+
         if (this.dependencies.contains(pkgName)) {
             ClassReader reader = new ClassReader(classfileBuffer);
             ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
