@@ -4,14 +4,18 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.instrument.Instrumentation;
-import java.net.JarURLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -20,7 +24,36 @@ import java.util.zip.ZipFile;
 
 public class UppdateraAgent {
 
+
+    public static void save(Set<String> obj, String path) throws Exception {
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(
+                    new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8));
+            for (String s : obj) {
+                pw.println(s);
+            }
+            pw.flush();
+        } finally {
+            pw.close();
+        }
+    }
+
     public static void premain(String agentOps, Instrumentation inst) {
+
+
+        try {
+
+            HashSet<String> testClasses = Files.walk(Paths.get("target/test-classes"))
+                    .filter(p -> p.toString().endsWith(".class"))
+                    .map(p -> p.toString().replace(".class", "").replace("target/test-classes/", ""))
+                    .collect(HashSet::new, (map, v) -> map.add(v), HashSet::addAll);
+
+            save(testClasses, "tclass.uppdatera");
+
+        } catch (Exception e) {
+            System.out.println("No test files found");
+        }
 
         try {
             File file = new File(agentOps);
@@ -38,7 +71,7 @@ public class UppdateraAgent {
                     .withTransitivity()
                     .asFile();
 
-            for( File dep: depz){
+            for (File dep : depz) {
                 JarFile jf = new JarFile(dep);
                 inst.appendToBootstrapClassLoaderSearch(jf);
             }
@@ -67,6 +100,7 @@ public class UppdateraAgent {
             }
 
             if (packages.size() > 0) {
+                save(packages, "dclass.uppdatera");
                 Transformer transformer = new Transformer(packages);
                 inst.addTransformer(transformer);
             }
