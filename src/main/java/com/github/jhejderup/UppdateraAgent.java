@@ -85,12 +85,12 @@ public class UppdateraAgent {
 
             for (File dep : depz) {
                 JarFile jf = new JarFile(dep);
-                inst.appendToBootstrapClassLoaderSearch(jf);
+                inst.appendToSystemClassLoaderSearch(jf);
             }
 
             for (File dep : other_depz) {
                 JarFile jf = new JarFile(dep);
-                inst.appendToBootstrapClassLoaderSearch(jf);
+                inst.appendToSystemClassLoaderSearch(jf);
             }
 
             HashSet packages = new HashSet<String>();
