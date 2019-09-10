@@ -39,17 +39,19 @@ public class DependencyMethodSet {
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                try {
-                    if (methods.size() > 0) {
-                        File log = new File("functions.txt");
-                        fw = new FileWriter(log);
-                        for (String method : methods) {
-                            fw.write(method);
+                synchronized (methods) {
+                    try {
+                        if (methods.size() > 0) {
+                            File log = new File("functions.txt");
+                            fw = new FileWriter(log);
+                            for (String method : methods) {
+                                fw.write(method);
+                            }
+                            fw.close();
                         }
-                        fw.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
