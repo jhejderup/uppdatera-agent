@@ -71,7 +71,24 @@ public class UppdateraAgent {
                     .withTransitivity()
                     .asFile();
 
+
+            File[] other_depz = Maven.configureResolver()
+                    .workOffline()
+                    .loadPomFromFile("pom.xml")
+                    .importDependencies(
+                            ScopeType.RUNTIME,
+                            ScopeType.SYSTEM,
+                            ScopeType.TEST
+                    ).resolve()
+                    .withTransitivity()
+                    .asFile();
+
             for (File dep : depz) {
+                JarFile jf = new JarFile(dep);
+                inst.appendToBootstrapClassLoaderSearch(jf);
+            }
+
+            for (File dep : other_depz) {
                 JarFile jf = new JarFile(dep);
                 inst.appendToBootstrapClassLoaderSearch(jf);
             }
