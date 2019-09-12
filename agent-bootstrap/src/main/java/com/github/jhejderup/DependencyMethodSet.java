@@ -80,7 +80,10 @@ public class DependencyMethodSet {
             }
         }
 
-        if (!isTestClass)
-            methods.add(fnname);
+        if (!isTestClass) {
+            synchronized (methods) {
+                methods.add(fnname);
+            }
+        }
     }
 }

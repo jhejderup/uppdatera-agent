@@ -9,11 +9,11 @@ import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Transformer implements ClassFileTransformer {
+public class DependencyTransformer implements ClassFileTransformer {
 
     private final HashSet<String> dependencies;
 
-    public Transformer(HashSet<String> dependencies) {
+    public DependencyTransformer(HashSet<String> dependencies) {
         this.dependencies = dependencies;
 
     }
@@ -23,20 +23,18 @@ public class Transformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
             throws IllegalClassFormatException {
 
-
         String[] segments = className.split("/");
         String pkgName = String.join("/", Arrays.copyOf(segments, segments.length - 1));
 
         if (this.dependencies.contains(pkgName)) {
             ClassReader reader = new ClassReader(classfileBuffer);
-            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
-            RecordMethodInvocation visitor = new RecordMethodInvocation(writer, className);
+            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
+            InstrumentMethodBodies visitor = new InstrumentMethodBodies(writer, className);
             reader.accept(visitor, ClassReader.EXPAND_FRAMES);
             return writer.toByteArray();
         }
         return null;
     }
-
 
 }
 

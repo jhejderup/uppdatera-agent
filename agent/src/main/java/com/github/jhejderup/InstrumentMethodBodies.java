@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class RecordMethodInvocation extends ClassVisitor {
+public class InstrumentMethodBodies extends ClassVisitor {
 
     private static Map<Integer, Integer> opcodeMap = new HashMap<>();
     private final String hotClassName;
 
-    public RecordMethodInvocation(ClassWriter cw, String clazzName) {
+    public InstrumentMethodBodies(ClassWriter cw, String clazzName) {
         super(Opcodes.ASM5, cw);
         hotClassName = clazzName;
     }

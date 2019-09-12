@@ -16,7 +16,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -41,7 +40,6 @@ public class UppdateraAgent {
 
     public static void premain(String agentOps, Instrumentation inst) {
 
-
         try {
 
             HashSet<String> testClasses = Files.walk(Paths.get("target/test-classes"))
@@ -56,12 +54,7 @@ public class UppdateraAgent {
         }
 
         try {
-            File file = new File(agentOps);
-            JarFile jfagent = new JarFile(file);
-            inst.appendToBootstrapClassLoaderSearch(jfagent);
-
             File[] depz = Maven.configureResolver()
-                    .workOffline()
                     .loadPomFromFile("pom.xml")
                     .importDependencies(
                             ScopeType.COMPILE,
@@ -70,28 +63,6 @@ public class UppdateraAgent {
                     ).resolve()
                     .withTransitivity()
                     .asFile();
-
-
-            File[] other_depz = Maven.configureResolver()
-                    .workOffline()
-                    .loadPomFromFile("pom.xml")
-                    .importDependencies(
-                            ScopeType.RUNTIME,
-                            ScopeType.SYSTEM,
-                            ScopeType.TEST
-                    ).resolve()
-                    .withTransitivity()
-                    .asFile();
-
-            for (File dep : depz) {
-                JarFile jf = new JarFile(dep);
-                inst.appendToSystemClassLoaderSearch(jf);
-            }
-
-            for (File dep : other_depz) {
-                JarFile jf = new JarFile(dep);
-                inst.appendToSystemClassLoaderSearch(jf);
-            }
 
             HashSet packages = new HashSet<String>();
 
@@ -118,8 +89,8 @@ public class UppdateraAgent {
 
             if (packages.size() > 0) {
                 save(packages, "dclass.uppdatera");
-                Transformer transformer = new Transformer(packages);
-                inst.addTransformer(transformer);
+                DependencyTransformer transformer = new DependencyTransformer(packages);
+                inst.addTransformer(transformer, false);
             }
         } catch (Exception e) {
             System.out.println("Error!");
