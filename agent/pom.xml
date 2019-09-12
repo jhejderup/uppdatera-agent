@@ -17,6 +17,15 @@
         <finalName>agent</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
@@ -31,14 +40,14 @@
                             <createSourcesJar>true</createSourcesJar>
                             <shadeSourcesContent>true</shadeSourcesContent>
                             <transformers>
-                                <transformer
+                                <transformerg
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Premain-Class>com.github.jhejderup.AgentUppdatera</Premain-Class>
                                         <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                         <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                     </manifestEntries>
-                                </transformer>
+                                </transformerg>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
