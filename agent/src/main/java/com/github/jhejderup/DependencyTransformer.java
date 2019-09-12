@@ -4,7 +4,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,8 +19,7 @@ public class DependencyTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer)
-            throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) {
 
         String[] segments = className.split("/");
         String pkgName = String.join("/", Arrays.copyOf(segments, segments.length - 1));

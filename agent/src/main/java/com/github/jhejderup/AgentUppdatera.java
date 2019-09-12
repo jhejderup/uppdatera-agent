@@ -21,7 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 
-public class UppdateraAgent {
+public class AgentUppdatera {
 
 
     public static void save(Set<String> obj, String path) throws Exception {
