@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -35,17 +36,23 @@
                         </goals>
                         <configuration>
                             <minimizeJar>false</minimizeJar>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <shadedArtifactAttached>false
+                            </shadedArtifactAttached>
+                            <createDependencyReducedPom>true
+                            </createDependencyReducedPom>
                             <createSourcesJar>true</createSourcesJar>
                             <shadeSourcesContent>true</shadeSourcesContent>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Premain-Class>com.github.jhejderup.AgentUppdatera</Premain-Class>
-                                        <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                                        <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                                        <Premain-Class>
+                                            com.github.jhejderup.AgentUppdatera
+                                        </Premain-Class>
+                                        <Can-Redefine-Classes>true
+                                        </Can-Redefine-Classes>
+                                        <Can-Retransform-Classes>true
+                                        </Can-Retransform-Classes>
                                     </manifestEntries>
                                 </transformer>
                                 <transformer
@@ -54,11 +61,15 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.objectweb.asm</pattern>
-                                    <shadedPattern>se.uppdatera.org.objectweb.asm</shadedPattern>
+                                    <shadedPattern>
+                                        se.uppdatera.org.objectweb.asm
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.jboss.shrinkwrap</pattern>
-                                    <shadedPattern>se.uppdatera.org.jboss.shrinkwrap</shadedPattern>
+                                    <shadedPattern>
+                                        se.uppdatera.org.jboss.shrinkwrap
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -5,34 +5,32 @@ import org.objectweb.asm.ClassWriter;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Set;
 
 public class DependencyTransformer implements ClassFileTransformer {
 
-    private final HashSet<String> dependencies;
+  private final Set<String> dependencies;
 
-    public DependencyTransformer(HashSet<String> dependencies) {
-        this.dependencies = dependencies;
+  public DependencyTransformer(Set<String> dependencies) {
+    this.dependencies = dependencies;
 
+  }
+
+  @Override
+  public byte[] transform(ClassLoader loader, String className,
+      Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
+      byte[] classfileBuffer) {
+
+    if (this.dependencies.contains(className)) {
+      ClassReader reader = new ClassReader(classfileBuffer);
+      ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
+      InstrumentMethodBodies visitor = new InstrumentMethodBodies(writer,
+          className);
+      reader.accept(visitor, ClassReader.EXPAND_FRAMES);
+      return writer.toByteArray();
     }
-
-    @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) {
-
-        String[] segments = className.split("/");
-        String pkgName = String.join("/", Arrays.copyOf(segments, segments.length - 1));
-
-        if (this.dependencies.contains(pkgName)) {
-            ClassReader reader = new ClassReader(classfileBuffer);
-            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
-            InstrumentMethodBodies visitor = new InstrumentMethodBodies(writer, className);
-            reader.accept(visitor, ClassReader.EXPAND_FRAMES);
-            return writer.toByteArray();
-        }
-        return null;
-    }
+    return null;
+  }
 
 }
 
