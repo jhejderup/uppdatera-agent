@@ -15,7 +15,8 @@ public class AgentUppdatera {
       String dataPath = System.getProperty("user.dir")
           .replace("/root", "/data");
 
-      Set<String> packages = Files.lines(Paths.get(dataPath, "cha.txt"))
+      Set<String> packages = Files
+          .lines(Paths.get(dataPath, "callgraph", "cha.txt"))
           .collect(Collectors.toSet());
 
       if (packages.size() > 0) {
